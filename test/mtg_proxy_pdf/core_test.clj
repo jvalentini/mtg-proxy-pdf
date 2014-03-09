@@ -33,11 +33,11 @@
       (:attrs)
       (:src)))
 
-(deftest image-url-test
-  (testing "it builds a url to magiccards.info"
-    (is (= test-image-url (image-url test-card-name test-query-url)))))
-
 (image-url (:name (first test-decklist)) (build-query-url (first test-decklist)))
+
+(deftest image-url-test
+  (testing "it returns the url to the card image"
+    (is (= test-image-url (image-url test-card-name test-query-url)))))
 
 (defn decklist->images-urls [decklist]
   (let [names (map :name decklist)
