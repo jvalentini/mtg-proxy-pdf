@@ -8,11 +8,9 @@
             [hiccup.element :as element]))
 
 (def test-template "test/templates/academy-rector.html")
-
-(def expected-query-url "http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname")
-
+(def test-query-url "http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname")
+(def test-card-name "Academy Rector")
 (def test-card-record { :name "Academy Rector", :quantity 1 })
-
 (def decklist [{ :name "Academy Rector", :quantity 1 }
                { :name "Birthing Pod",   :quantity 1 }
                { :name "Kitchen Finks",  :quantity 1 }])
@@ -23,7 +21,7 @@
 
 (deftest build-query-url-test
   (testing "it builds a url to magiccards.info"
-    (is (= expected-query-url (build-query-url test-card-record)))))
+    (is (= test-query-url (build-query-url test-card-record)))))
 
 (defn image-url [card-name query-url]
   (-> query-url
@@ -33,6 +31,12 @@
       (first)
       (:attrs)
       (:src)))
+
+(def test-image-url "http://magiccards.info/scans/en/ud/1.jpg")
+
+(deftest image-url-test
+  (testing "it builds a url to magiccards.info"
+    (is (= test-image-url (image-url test-card-name test-query-url)))))
 
 (image-url (:name (first decklist)) (build-query-url (first decklist)))
 
