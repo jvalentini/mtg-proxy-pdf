@@ -3,8 +3,9 @@
 
 (defn parse-card-name-quantity
   [record]
-  (let [quantity 1
-        card-name record]
+  (let [parsed-record (re-find #"(^\d)?\s*(.*)" record)
+        quantity (Integer. (or (second parsed-record) 1))
+        card-name (nth parsed-record 2)]
     { :quantity quantity :name card-name }))
 
 ;; TODO: should parse out a quantity
