@@ -24,3 +24,7 @@
      (parse-decklist-string decklist-string "\n"))
   ([decklist-string delimiter]
      (map parse-card-name-quantity (split decklist-string (re-pattern delimiter)))))
+
+(defn parse-text-file
+  [file-name]
+  (parse-decklist-string (slurp file-name)))

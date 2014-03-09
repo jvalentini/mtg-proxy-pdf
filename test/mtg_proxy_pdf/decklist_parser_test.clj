@@ -1,16 +1,17 @@
 (ns mtg-proxy-pdf.decklist-parser-test
   (:require [clojure.test :refer :all]
-            [mtg-proxy-pdf.decklist-parser :refer :all]))
+            [mtg-proxy-pdf.decklist-parser :refer :all]
+            [clojure.java.io :as io]))
 
-(def test-decklist-string "Academy Rector\nBirthing Pod\nKitchen Finks")
+(def test-decklist-string "Academy Rector\nBirthing Pod\n2 Kitchen Finks")
 
-(def test-comma-separated-decklist-string "Academy Rector,Birthing Pod,Kitchen Finks")
+(def test-comma-separated-decklist-string "Academy Rector,Birthing Pod,2x Kitchen Finks")
 
-(def test-dash-separated-decklist-string "Academy Rector---Birthing Pod---Kitchen Finks")
+(def test-dash-separated-decklist-string "Academy Rector---Birthing Pod---2   Kitchen Finks")
 
 (def test-decklist [{ :name "Academy Rector", :quantity 1 }
                     { :name "Birthing Pod",   :quantity 1 }
-                    { :name "Kitchen Finks",  :quantity 1 }])
+                    { :name "Kitchen Finks",  :quantity 2 }])
 
 (deftest parse-card-name-no-quantity-test
   (testing "it parses a card name with no quantity"
@@ -43,3 +44,7 @@
 (deftest parse-decklist-string-mulit-delim-test
   (testing "it converts a string with a multi-character delimiter"
     (is (= test-decklist (parse-decklist-string test-dash-separated-decklist-string "---")))))
+
+(deftest parse-text-file-test
+  (testing "it parses a text file"
+    (is (= test-decklist (parse-text-file "test/templates/decklist.txt")))))
