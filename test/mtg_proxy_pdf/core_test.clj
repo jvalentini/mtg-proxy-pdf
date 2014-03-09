@@ -13,22 +13,15 @@
 
 (def test-template "test/templates/academy-rector.html")
 
-(def test-card-name "Academy Rector")
-
 (def query-url "http://magiccards.info/query?q=Academy+Rector&v=card&s=cname")
 
 (def decklist [{ :name "Academy Rector", :quantity 1 }
                { :name "Birthing Pod",   :quantity 1 }
                { :name "Kitchen Finks",  :quantity 1 }])
 
-(defn sanitize [name]
-  (codec/url-encode name))
-
-(sanitize test-card-name)
-
 (defn build-query-url [card-record]
   (let [{:keys [name]} card-record]
-    (format "http://magiccards.info/query?q=%s&v=card&s=cname" (sanitize name))))
+    (format "http://magiccards.info/query?q=%s&v=card&s=cname" (codec/url-encode name))))
 
 (build-query-url (first decklist))
 
