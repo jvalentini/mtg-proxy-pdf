@@ -1,5 +1,6 @@
 (ns mtg-proxy-pdf.core
-  (:require [net.cgrand.enlive-html :as enlive]
+  (:require [mtg-proxy-pdf.decklist-parser :as decklist-parser]
+            [net.cgrand.enlive-html :as enlive]
             [ring.util.codec :as codec]
             [clj-pdf.core :as pdf]
             [hiccup.core :as hiccup]
@@ -45,3 +46,7 @@
                               :align  :center}
                       image]) images)]
    (apply str file-name ".pdf")))
+
+(defn generate
+  [in-file-name out-file-name]
+  (images->html (decklist->images-urls (decklist-parser/parse-text-file in-file-name)) out-file-name))

@@ -1,6 +1,7 @@
 (ns mtg-proxy-pdf.core-test
   (:require [clojure.test :refer :all]
             [mtg-proxy-pdf.core :refer :all]
+            [mtg-proxy-pdf.decklist-parser :as decklist-parser]
             [clojure.java.io :as io]))
 
 (def test-template "test/templates/academy-rector.html")
@@ -13,8 +14,10 @@
                     { :name "Birthing Pod",   :quantity 1 }
                     { :name "Kitchen Finks",  :quantity 1 }])
 (def test-decklist-images (decklist->images-urls test-decklist))
-(def test-file-name "test")
-(def test-file (io/as-file test-file-name))
+(def test-out-file-name "test")
+(def test-out-file (io/as-file test-out-file-name))
+(def test-in-file-name "test/templates/decklist.txt")
+(def test-in-file (io/as-file "test/templates/decklist.txt"))
 
 (deftest build-query-url-test
   (testing "it builds a url to magiccards.info"
@@ -32,14 +35,25 @@
 ;; SIDE-EFFECTS TESTS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(deftest decklist->images-urls-from-parsed-file-test
+  (testing "it converts a decklist to a list of image urls from a parsed file"
+    (is (= test-image-url-list (decklist->images-urls (decklist-parser/parse-text-file test-in-file-name))))))
+
 (deftest images->html-test
   (testing "it writes the card images to html"
-    (io/delete-file test-file-name true) ;; true to ignore error if file doesn't exist
-    (images->html test-decklist-images test-file-name)
-    (is (.exists test-file))))
+    (io/delete-file test-out-file-name true) ;; true to ignore error if file doesn't exist
+    (images->html test-decklist-images test-out-file-name)
+    (is (.exists test-out-file))))
 
 (deftest images->pdf-test
   (testing "it writes the card images to a pdf"
-    (io/delete-file test-file-name true) ;; true to ignore error if file doesn't exist
-    (images->pdf test-decklist-images test-file-name)
-    (is (.exists test-file))))
+    (io/delete-file test-out-file-name true) ;; true to ignore error if file doesn't exist
+    (images->pdf test-decklist-images test-out-file-name)
+    (is (.exists test-out-file))))
+
+(deftest generate-test
+  (testing "takes a decklist file and creates an html page with the images"
+    (is (.exists test-in-file)) ;; ensure our input file exists
+    (io/delete-file test-out-file-name true) ;; delete output file if it exists
+    (generate test-in-file-name test-out-file-name)
+    (is (.exists test-out-file))))
