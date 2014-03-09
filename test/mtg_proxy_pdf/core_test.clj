@@ -12,20 +12,20 @@
 (def test-decklist [{ :name "Academy Rector", :quantity 1 }
                     { :name "Birthing Pod",   :quantity 1 }
                     { :name "Kitchen Finks",  :quantity 1 }])
-(def test-decklist-images (mtg-proxy-pdf.core/decklist->images-urls test-decklist))
+(def test-decklist-images (decklist->images-urls test-decklist))
 (def test-file-name "test")
 (def test-file (io/as-file test-file-name))
 
 (deftest build-query-url-test
   (testing "it builds a url to magiccards.info"
-    (is (= test-query-url (mtg-proxy-pdf.core/build-query-url test-card-record)))))
+    (is (= test-query-url (build-query-url test-card-record)))))
 
 (deftest image-url-test
   (testing "it returns the url to the card image"
-    (is (= test-image-url (mtg-proxy-pdf.core/image-url test-card-name test-query-url)))))
+    (is (= test-image-url (image-url test-card-name test-query-url)))))
 
 (deftest decklist->images-urls-test
-  (testing "it builds a url to magiccards.info"
+  (testing "it converts a decklist to a list of image urls"
     (is (= test-image-url-list test-decklist-images))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
