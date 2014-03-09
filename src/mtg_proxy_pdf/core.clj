@@ -29,3 +29,19 @@
   (let [names (map :name decklist)
         urls (map build-query-url decklist)]
     (map image-url names urls)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; BEWARE: SIDE-EFFECTS LIVE BELOW!!!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn images->html [images file-name]
+  (spit file-name (hiccup/html (map (fn [image] (element/image { :width 222 :height 315} image)) images))))
+
+(defn images->pdf [images file-name]
+  (pdf/pdf
+   [{}
+    (map (fn [image] [:image {:xscale 0.5
+                              :yscale 0.5
+                              :align  :center}
+                      image]) images)]
+   file-name))

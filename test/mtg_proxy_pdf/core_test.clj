@@ -1,6 +1,7 @@
 (ns mtg-proxy-pdf.core-test
   (:require [clojure.test :refer :all]
-            [mtg-proxy-pdf.core :refer :all]))
+            [mtg-proxy-pdf.core :refer :all]
+            [clojure.java.io :as io]))
 
 (def test-template "test/templates/academy-rector.html")
 (def test-query-url "http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname")
@@ -11,6 +12,9 @@
 (def test-decklist [{ :name "Academy Rector", :quantity 1 }
                     { :name "Birthing Pod",   :quantity 1 }
                     { :name "Kitchen Finks",  :quantity 1 }])
+(def test-decklist-images (mtg-proxy-pdf.core/decklist->images-urls test-decklist))
+(def test-html-file-name "test.html")
+(def test-html-file (io/as-file test-html-file-name))
 
 (deftest build-query-url-test
   (testing "it builds a url to magiccards.info"
@@ -22,24 +26,16 @@
 
 (deftest decklist->images-urls-test
   (testing "it builds a url to magiccards.info"
-    (is (= test-image-url-list (mtg-proxy-pdf.core/decklist->images-urls test-decklist)))))
+    (is (= test-image-url-list test-decklist-images))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; BEWARE: SIDE-EFFECTS LIVE BELOW!!!
+;; SIDE-EFFECTS TESTS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn images->html [images file-name]
-  (spit file-name (hiccup/html (map (fn [image] (element/image { :width 222 :height 315} image)) images))))
-
-(images->html (mtg-proxy-pdf.core/decklist->images-urls test-decklist) "test.html")
-
-(defn images->pdf [images file-name]
-  (pdf/pdf
-   [{}
-    (map (fn [image] [:image {:xscale 0.5
-                              :yscale 0.5
-                              :align  :center}
-                      image]) images)]
-   file-name))
+(deftest images->html-test
+  (testing "it writes the card images to html"
+    (io/delete-file test-html-file-name true) ;; true to ignore error if file doesn't exist
+    (images->html test-decklist-images test-html-file-name)
+    (is (.exists test-html-file))))
 
 (images->pdf (mtg-proxy-pdf.core/decklist->images-urls test-decklist) "test.pdf")
