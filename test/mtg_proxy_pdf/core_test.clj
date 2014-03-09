@@ -11,6 +11,7 @@
 (def test-query-url "http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname")
 (def test-card-name "Academy Rector")
 (def test-image-url "http://magiccards.info/scans/en/ud/1.jpg")
+(def test-image-url-list '("http://magiccards.info/scans/en/ud/1.jpg" "http://magiccards.info/scans/en/nph/104.jpg" "http://magiccards.info/scans/en/mma/190.jpg"))
 (def test-card-record { :name "Academy Rector", :quantity 1 })
 (def test-decklist [{ :name "Academy Rector", :quantity 1 }
                     { :name "Birthing Pod",   :quantity 1 }
@@ -45,6 +46,10 @@
     (map image-url names urls)))
 
 (decklist->images-urls test-decklist)
+
+(deftest decklist->images-urls-test
+  (testing "it builds a url to magiccards.info"
+    (is (= test-image-url-list (decklist->images-urls test-decklist)))))
 
 ;; todo: include css to set the margin and padding
 ;; todo: use template
