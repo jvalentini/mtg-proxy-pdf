@@ -7,9 +7,6 @@
             [hiccup.core :as hiccup]
             [hiccup.element :as element]))
 
-(deftest a-test
-  (testing "it returns a list of card images"
-    (is (= 0 1))))
 
 (def test-template "test/templates/academy-rector.html")
 
