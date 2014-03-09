@@ -8,9 +8,13 @@
 ;; todo: include css to set the margin and padding
 ;; todo: use template
 
+;; URL where we can find the card images.
+;; Expects a format specifier.
+(def image-source-url "http://magiccards.info/query?q=%s&v=card&s=cname")
+
 (defn build-query-url [card-record]
   (let [{:keys [name]} card-record]
-    (format "http://magiccards.info/query?q=%s&v=card&s=cname" (codec/url-encode name))))
+    (format image-source-url (codec/url-encode name))))
 
 (defn image-url [card-name query-url]
   (-> query-url
