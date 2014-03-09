@@ -4,6 +4,10 @@
 
 (def test-decklist-string "Academy Rector\nBirthing Pod\nKitchen Finks")
 
+(def test-comma-separated-decklist-string "Academy Rector,Birthing Pod,Kitchen Finks")
+
+(def test-dash-separated-decklist-string "Academy Rector---Birthing Pod---Kitchen Finks")
+
 (def test-decklist [{ :name "Academy Rector", :quantity 1 }
                     { :name "Birthing Pod",   :quantity 1 }
                     { :name "Kitchen Finks",  :quantity 1 }])
@@ -31,3 +35,11 @@
 (deftest parse-decklist-string-test
   (testing "it converts a string into a decklist with a card name and quantity"
     (is (= test-decklist (parse-decklist-string test-decklist-string)))))
+
+(deftest parse-decklist-string-alt-delim-test
+  (testing "it converts a string with an alternative delimiter"
+    (is (= test-decklist (parse-decklist-string test-comma-separated-decklist-string ",")))))
+
+(deftest parse-decklist-string-mulit-delim-test
+  (testing "it converts a string with a multi-character delimiter"
+    (is (= test-decklist (parse-decklist-string test-dash-separated-decklist-string "---")))))
