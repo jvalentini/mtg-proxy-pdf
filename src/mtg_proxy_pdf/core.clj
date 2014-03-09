@@ -3,7 +3,8 @@
             [ring.util.codec :as codec]
             [clj-pdf.core :as pdf]
             [hiccup.core :as hiccup]
-            [hiccup.element :as element]))
+            [hiccup.element :as element]
+            [clojure.string :refer [split]]))
 
 ;; todo: include css to set the margin and padding
 ;; todo: use template
@@ -45,3 +46,9 @@
                               :align  :center}
                       image]) images)]
    (apply str file-name ".pdf")))
+
+;; TODO: should parse out a quantity
+;; TODO: should accept delimiters other than newline
+(defn parse-decklist-string
+  [decklist-string]
+  (map (fn [card-name] { :quantity 1 :name card-name }) (split decklist-string #"\n")))
