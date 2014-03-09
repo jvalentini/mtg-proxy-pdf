@@ -9,7 +9,6 @@
 (def test-image-url "http://magiccards.info/scans/en/ud/1.jpg")
 (def test-image-url-list '("http://magiccards.info/scans/en/ud/1.jpg" "http://magiccards.info/scans/en/nph/104.jpg" "http://magiccards.info/scans/en/mma/190.jpg"))
 (def test-card-record { :name "Academy Rector", :quantity 1 })
-(def test-decklist-string "Academy Rector\nBirthing Pod\nKitchen Finks")
 (def test-decklist [{ :name "Academy Rector", :quantity 1 }
                     { :name "Birthing Pod",   :quantity 1 }
                     { :name "Kitchen Finks",  :quantity 1 }])
@@ -44,7 +43,3 @@
     (io/delete-file test-file-name true) ;; true to ignore error if file doesn't exist
     (images->pdf test-decklist-images test-file-name)
     (is (.exists test-file))))
-
-(deftest parse-decklist-string-test
-  (testing "it converts a string into a decklist with a card name and quantity"
-    (is (= test-decklist (parse-decklist-string test-decklist-string)))))
