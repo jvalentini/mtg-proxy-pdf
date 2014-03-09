@@ -20,6 +20,10 @@
   (testing "it parses a card name and quantity with multiple spaces"
     (is (= {:quantity 3 :name "Academy Rector"} (parse-card-name-quantity "3    Academy Rector")))))
 
+(deftest parse-card-name-quantity-with-x-test
+  (testing "it parses a card name and quantity with multiple spaces"
+    (is (= {:quantity 4 :name "Academy Rector"} (parse-card-name-quantity "4x Academy Rector")))))
+
 (deftest parse-decklist-string-test
   (testing "it converts a string into a decklist with a card name and quantity"
     (is (= test-decklist (parse-decklist-string test-decklist-string)))))
