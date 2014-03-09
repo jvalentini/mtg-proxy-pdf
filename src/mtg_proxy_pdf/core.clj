@@ -6,9 +6,6 @@
             [hiccup.core :as hiccup]
             [hiccup.element :as element]))
 
-;; todo: include css to set the margin and padding
-;; todo: use template
-
 ;; URL where we can find the card images.
 ;; Expects a format specifier.
 (def image-source-url "http://magiccards.info/query?q=%s&v=card&s=cname")
