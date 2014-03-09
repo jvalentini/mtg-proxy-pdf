@@ -4,7 +4,6 @@
             [mtg-proxy-pdf.decklist-parser :as decklist-parser]
             [clojure.java.io :as io]))
 
-(def test-template "test/templates/academy-rector.html")
 (def test-query-url "http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname")
 (def test-card-name "Academy Rector")
 (def test-image-url "http://magiccards.info/scans/en/ud/1.jpg")
