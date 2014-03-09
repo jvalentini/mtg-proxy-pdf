@@ -9,3 +9,6 @@ TODO:
 - Write a protocol/interface for images->html and images->pdf so it can easily dispatch.
 - Add html template and css file.
 - Make it generic enough so you can easily add another site to pull images from.
+- Handle empty lines in text file
+- Handle whitespace after card names
+- Handle image urls that can't be found
