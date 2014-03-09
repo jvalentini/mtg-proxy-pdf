@@ -7,6 +7,9 @@
             [hiccup.core :as hiccup]
             [hiccup.element :as element]))
 
+;; todo: include css to set the margin and padding
+;; todo: use template
+
 (def test-template "test/templates/academy-rector.html")
 (def test-query-url "http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname")
 (def test-card-name "Academy Rector")
@@ -51,8 +54,9 @@
   (testing "it builds a url to magiccards.info"
     (is (= test-image-url-list (decklist->images-urls test-decklist)))))
 
-;; todo: include css to set the margin and padding
-;; todo: use template
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; BEWARE: SIDE-EFFECTS LIVE BELOW!!!
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn images->html [images file-name]
   (spit file-name (hiccup/html (map (fn [image] (element/image { :width 222 :height 315} image)) images))))
