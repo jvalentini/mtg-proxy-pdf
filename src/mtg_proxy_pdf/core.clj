@@ -35,7 +35,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn images->html [images file-name]
-  (spit file-name (hiccup/html (map (fn [image] (element/image { :width 222 :height 315} image)) images))))
+  (spit (apply str file-name ".html") (hiccup/html (map (fn [image] (element/image { :width 222 :height 315} image)) images))))
 
 (defn images->pdf [images file-name]
   (pdf/pdf
@@ -44,4 +44,4 @@
                               :yscale 0.5
                               :align  :center}
                       image]) images)]
-   file-name))
+   (apply str file-name ".pdf")))

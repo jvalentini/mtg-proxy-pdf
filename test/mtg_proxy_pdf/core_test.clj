@@ -13,10 +13,8 @@
                     { :name "Birthing Pod",   :quantity 1 }
                     { :name "Kitchen Finks",  :quantity 1 }])
 (def test-decklist-images (mtg-proxy-pdf.core/decklist->images-urls test-decklist))
-(def test-html-file-name "test.html")
-(def test-html-file (io/as-file test-html-file-name))
-(def test-pdf-file-name "test.html")
-(def test-pdf-file (io/as-file test-pdf-file-name))
+(def test-file-name "test")
+(def test-file (io/as-file test-file-name))
 
 (deftest build-query-url-test
   (testing "it builds a url to magiccards.info"
@@ -36,12 +34,12 @@
 
 (deftest images->html-test
   (testing "it writes the card images to html"
-    (io/delete-file test-html-file-name true) ;; true to ignore error if file doesn't exist
-    (images->html test-decklist-images test-html-file-name)
-    (is (.exists test-html-file))))
+    (io/delete-file test-file-name true) ;; true to ignore error if file doesn't exist
+    (images->html test-decklist-images test-file-name)
+    (is (.exists test-file))))
 
 (deftest images->pdf-test
   (testing "it writes the card images to a pdf"
-    (io/delete-file test-pdf-file-name true) ;; true to ignore error if file doesn't exist
-    (images->pdf test-decklist-images test-pdf-file-name)
-    (is (.exists test-pdf-file))))
+    (io/delete-file test-file-name true) ;; true to ignore error if file doesn't exist
+    (images->pdf test-decklist-images test-file-name)
+    (is (.exists test-file))))
