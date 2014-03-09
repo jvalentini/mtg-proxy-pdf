@@ -10,10 +10,11 @@
 (def test-template "test/templates/academy-rector.html")
 (def test-query-url "http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname")
 (def test-card-name "Academy Rector")
+(def test-image-url "http://magiccards.info/scans/en/ud/1.jpg")
 (def test-card-record { :name "Academy Rector", :quantity 1 })
-(def decklist [{ :name "Academy Rector", :quantity 1 }
-               { :name "Birthing Pod",   :quantity 1 }
-               { :name "Kitchen Finks",  :quantity 1 }])
+(def test-decklist [{ :name "Academy Rector", :quantity 1 }
+                    { :name "Birthing Pod",   :quantity 1 }
+                    { :name "Kitchen Finks",  :quantity 1 }])
 
 (defn build-query-url [card-record]
   (let [{:keys [name]} card-record]
@@ -32,20 +33,18 @@
       (:attrs)
       (:src)))
 
-(def test-image-url "http://magiccards.info/scans/en/ud/1.jpg")
-
 (deftest image-url-test
   (testing "it builds a url to magiccards.info"
     (is (= test-image-url (image-url test-card-name test-query-url)))))
 
-(image-url (:name (first decklist)) (build-query-url (first decklist)))
+(image-url (:name (first test-decklist)) (build-query-url (first test-decklist)))
 
 (defn decklist->images-urls [decklist]
   (let [names (map :name decklist)
         urls (map build-query-url decklist)]
     (map image-url names urls)))
 
-(decklist->images-urls decklist)
+(decklist->images-urls test-decklist)
 
 ;; todo: include css to set the margin and padding
 ;; todo: use template
@@ -53,7 +52,7 @@
 (defn images->html [images file-name]
   (spit file-name (hiccup/html (map (fn [image] (element/image { :width 222 :height 315} image)) images))))
 
-(images->html (decklist->images-urls decklist) "test.html")
+(images->html (decklist->images-urls test-decklist) "test.html")
 
 (defn images->pdf [images file-name]
   (pdf/pdf
@@ -64,4 +63,4 @@
                       image]) images)]
    file-name))
 
-(images->pdf (decklist->images-urls decklist) "test.pdf")
+(images->pdf (decklist->images-urls test-decklist) "test.pdf")
