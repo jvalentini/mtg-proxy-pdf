@@ -4,7 +4,8 @@
             [ring.util.codec :as codec]
             [clj-pdf.core :as pdf]
             [hiccup.core :as hiccup]
-            [hiccup.element :as element]))
+            [hiccup.element :as element]
+            [clojure.java.io :as io]))
 
 ;; URL where we can find the card images.
 ;; Expects a format specifier.
@@ -23,6 +24,12 @@
       (:attrs)
       (:src)))
 
+(defn fetch-image
+  [image-uri]
+  (with-open [in (io/input-stream image-uri)
+              out (io/output-stream (.getName (io/file image-uri)))]
+    (io/copy in out)))
+
 (defn decklist->images-urls [decklist]
   (let [names (map :name decklist)
         urls (map build-query-url decklist)]
@@ -32,8 +39,12 @@
 ;; BEWARE: SIDE-EFFECTS LIVE BELOW!!!
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn image-element
+  [image]
+  (element/image { :width 222 :height 315} image))
+
 (defn images->html [images file-name]
-  (spit (apply str file-name ".html") (hiccup/html (map (fn [image] (element/image { :width 222 :height 315} image)) images))))
+  (spit (apply str file-name ".html") (hiccup/html (map image-element images))))
 
 (defn images->pdf [images file-name]
   (pdf/pdf

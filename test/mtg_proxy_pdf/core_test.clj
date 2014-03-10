@@ -4,19 +4,33 @@
             [mtg-proxy-pdf.decklist-parser :as decklist-parser]
             [clojure.java.io :as io]))
 
-(def test-query-url "http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname")
 (def test-card-name "Academy Rector")
+(def test-query-url "http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname")
 (def test-image-url "http://magiccards.info/scans/en/ud/1.jpg")
-(def test-image-url-list '("http://magiccards.info/scans/en/ud/1.jpg" "http://magiccards.info/scans/en/nph/104.jpg" "http://magiccards.info/scans/en/mma/190.jpg"))
-(def test-card-record { :name "Academy Rector", :quantity 1 })
-(def test-decklist [{ :name "Academy Rector", :quantity 1 }
+
+;; (def test-card-name "Archangel of Thune")
+;; (def test-query-url "http://magiccards.info/query?q=Archangel%20of%20Thune&v=card&s=cname")
+;; (def test-image-url "http://magiccards.info/scans/en/m14/5.jpg")
+
+;; (def test-card-name "Avacyn's Pilgrim")
+;; (def test-query-url "http://magiccards.info/query?q=Avacyn%27s%20Pilgrim&v=card&s=cname")
+;; (def test-image-url "http://magiccards.info/scans/en/isd/170.jpg")
+
+(def test-card-record { :name test-card-name, :quantity 1 })
+(def test-decklist [test-card-record
                     { :name "Birthing Pod",   :quantity 1 }
                     { :name "Kitchen Finks",  :quantity 1 }])
+(def test-image-url-list `(~test-image-url "http://magiccards.info/scans/en/nph/104.jpg" "http://magiccards.info/scans/en/mma/190.jpg"))
 (def test-decklist-images (decklist->images-urls test-decklist))
+
+(def test-query-urls '("http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname" "http://magiccards.info/query?q=Angelic%20Renewal&v=card&s=cname" "http://magiccards.info/query?q=Archangel%20Of%20Thune&v=card&s=cname" "http://magiccards.info/query?q=Ashen%20Rider&v=card&s=cname" "http://magiccards.info/query?q=Avacyn%27s%20Pilgrim&v=card&s=cname" "http://magiccards.info/query?q=Barren%20Moor&v=card&s=cname" "http://magiccards.info/query?q=Bayou&v=card&s=cname" "http://magiccards.info/query?q=Birds%20Of%20Paradise&v=card&s=cname" "http://magiccards.info/query?q=Birthing%20Pod&v=card&s=cname"))
+(def test-card-names '("Academy Rector" "Angelic Renewal" "Archangel Of Thune" "Ashen Rider" "Avacyn's Pilgrim" "Barren Moor" "Bayou" "Birds Of Paradise" "Birthing Pod"))
+(def test-images '("http://magiccards.info/scans/en/ud/1.jpg" "http://magiccards.info/scans/en/wl/120.jpg" nil "http://magiccards.info/scans/en/ths/187.jpg" "http://magiccards.info/scans/en/isd/170.jpg" "http://magiccards.info/scans/en/c13/277.jpg" "http://magiccards.info/scans/en/rv/283.jpg" nil "http://magiccards.info/scans/en/nph/104.jpg"))
+
 (def test-out-file-name "test")
 (def test-out-file (io/as-file test-out-file-name))
 (def test-in-file-name "test/templates/decklist.txt")
-(def test-in-file (io/as-file "test/templates/decklist.txt"))
+(def test-in-file (io/as-file test-in-file-name))
 
 (deftest build-query-url-test
   (testing "it builds a url to magiccards.info"
@@ -25,6 +39,15 @@
 (deftest image-url-test
   (testing "it returns the url to the card image"
     (is (= test-image-url (image-url test-card-name test-query-url)))))
+
+(deftest image-urls-test
+  (testing "it returns the urls of multiple cards"
+    (is (= test-images (map image-url test-card-names test-query-urls)))))
+
+(deftest image-cache-test
+  (testing "it caches a retrieved image on disk"
+    (fetch-image "http://magiccards.info/scans/en/ud/1.jpg")
+    (is (.exists (io/as-file "1.jpg")))))
 
 (deftest decklist->images-urls-test
   (testing "it converts a decklist to a list of image urls"
@@ -56,3 +79,13 @@
     (io/delete-file test-out-file-name true) ;; delete output file if it exists
     (generate test-in-file-name test-out-file-name)
     (is (.exists test-out-file))))
+
+(def in-file-name "test/templates/big_decklist.txt")
+(def out-file-name "big_decklist.txt")
+(decklist-parser/parse-text-file in-file-name)
+(map :name (decklist-parser/parse-text-file in-file-name))
+(map build-query-url (decklist-parser/parse-text-file in-file-name))
+(decklist->images-urls (decklist-parser/parse-text-file in-file-name))
+;; (images->html (decklist->images-urls (decklist-parser/parse-text-file in-file-name)) out-file-name)
+
+;; (generate in-file-name out-file-name)
