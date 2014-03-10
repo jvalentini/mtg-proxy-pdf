@@ -44,11 +44,11 @@
   (testing "it returns the urls of multiple cards"
     (is (= test-images (map image-url test-card-names test-query-urls)))))
 
-(deftest image-cache-test
-  (testing "it caches a retrieved image on disk"
+(deftest cache-uri-test
+  (testing "it caches a retrieved uri onto disk"
     (let [expected-file (io/as-file "1.jpg")]
       (is (.exists expected-file))
-      (is (= expected-file (fetch-image "http://magiccards.info/scans/en/ud/1.jpg"))))))
+      (is (= expected-file (cache-uri "http://magiccards.info/scans/en/ud/1.jpg"))))))
 
 (deftest decklist->images-urls-test
   (testing "it converts a decklist to a list of image urls"

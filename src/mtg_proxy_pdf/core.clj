@@ -24,12 +24,13 @@
       (:attrs)
       (:src)))
 
-(defn fetch-image
-  [image-uri]
-  (with-open [in (io/input-stream image-uri)
-              out (io/output-stream (.getName (io/file image-uri)))]
-    (io/copy in out))
-  (io/file (.getName (io/file image-uri))))
+(defn cache-uri
+  [uri]
+  (let [out-file-name (.getName (io/file uri))]
+    (with-open [in (io/input-stream uri)
+                out (io/output-stream out-file-name)]
+      (io/copy in out))
+    (io/file out-file-name)))
 
 (defn decklist->images-urls [decklist]
   (let [names (map :name decklist)
