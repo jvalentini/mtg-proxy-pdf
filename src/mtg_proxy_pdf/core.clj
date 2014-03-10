@@ -15,6 +15,14 @@
   (let [{:keys [name]} card-record]
     (format image-source-url (codec/url-encode name))))
 
+(defn cache-uri
+  [uri]
+  (let [out-file-name (.getName (io/file uri))]
+    (with-open [in (io/input-stream uri)
+                out (io/output-stream out-file-name)]
+      (io/copy in out))
+    (io/file out-file-name)))
+
 (defn image-url [query-url]
   (-> query-url
       (java.net.URL.)
@@ -23,14 +31,6 @@
       (first)
       (:attrs)
       (:src)))
-
-(defn cache-uri
-  [uri]
-  (let [out-file-name (.getName (io/file uri))]
-    (with-open [in (io/input-stream uri)
-                out (io/output-stream out-file-name)]
-      (io/copy in out))
-    (io/file out-file-name)))
 
 (defn decklist->images-urls [decklist]
   (let [urls (map build-query-url decklist)]
