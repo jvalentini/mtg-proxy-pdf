@@ -25,7 +25,7 @@
 
 (def test-query-urls '("http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname" "http://magiccards.info/query?q=Angelic%20Renewal&v=card&s=cname" "http://magiccards.info/query?q=Archangel%20Of%20Thune&v=card&s=cname" "http://magiccards.info/query?q=Ashen%20Rider&v=card&s=cname" "http://magiccards.info/query?q=Avacyn%27s%20Pilgrim&v=card&s=cname" "http://magiccards.info/query?q=Barren%20Moor&v=card&s=cname" "http://magiccards.info/query?q=Bayou&v=card&s=cname" "http://magiccards.info/query?q=Birds%20Of%20Paradise&v=card&s=cname" "http://magiccards.info/query?q=Birthing%20Pod&v=card&s=cname"))
 (def test-card-names '("Academy Rector" "Angelic Renewal" "Archangel Of Thune" "Ashen Rider" "Avacyn's Pilgrim" "Barren Moor" "Bayou" "Birds Of Paradise" "Birthing Pod"))
-(def test-images '("http://magiccards.info/scans/en/ud/1.jpg" "http://magiccards.info/scans/en/wl/120.jpg" nil "http://magiccards.info/scans/en/ths/187.jpg" "http://magiccards.info/scans/en/isd/170.jpg" "http://magiccards.info/scans/en/c13/277.jpg" "http://magiccards.info/scans/en/rv/283.jpg" nil "http://magiccards.info/scans/en/nph/104.jpg"))
+(def test-images '("http://magiccards.info/scans/en/ud/1.jpg" "http://magiccards.info/scans/en/wl/120.jpg" "http://magiccards.info/scans/en/m14/5.jpg" "http://magiccards.info/scans/en/ths/187.jpg" "http://magiccards.info/scans/en/isd/170.jpg" "http://magiccards.info/scans/en/c13/277.jpg" "http://magiccards.info/scans/en/rv/283.jpg" "http://magiccards.info/scans/en/m12/165.jpg" "http://magiccards.info/scans/en/nph/104.jpg"))
 
 (def test-out-file-name "test")
 (def test-out-file (io/as-file test-out-file-name))
@@ -38,16 +38,17 @@
 
 (deftest image-url-test
   (testing "it returns the url to the card image"
-    (is (= test-image-url (image-url test-card-name test-query-url)))))
+    (is (= test-image-url (image-url test-query-url)))))
 
 (deftest image-urls-test
   (testing "it returns the urls of multiple cards"
-    (is (= test-images (map image-url test-card-names test-query-urls)))))
+    (is (= test-images (map image-url test-query-urls)))))
 
-(deftest image-cache-test
-  (testing "it caches a retrieved image on disk"
-    (fetch-image "http://magiccards.info/scans/en/ud/1.jpg")
-    (is (.exists (io/as-file "1.jpg")))))
+(deftest cache-uri-test
+  (testing "it caches a retrieved uri onto disk"
+    (let [expected-file (io/as-file "1.jpg")]
+      (is (.exists expected-file))
+      (is (= expected-file (cache-uri "http://magiccards.info/scans/en/ud/1.jpg"))))))
 
 (deftest decklist->images-urls-test
   (testing "it converts a decklist to a list of image urls"
@@ -79,13 +80,3 @@
     (io/delete-file test-out-file-name true) ;; delete output file if it exists
     (generate test-in-file-name test-out-file-name)
     (is (.exists test-out-file))))
-
-(def in-file-name "test/templates/big_decklist.txt")
-(def out-file-name "big_decklist.txt")
-(decklist-parser/parse-text-file in-file-name)
-(map :name (decklist-parser/parse-text-file in-file-name))
-(map build-query-url (decklist-parser/parse-text-file in-file-name))
-(decklist->images-urls (decklist-parser/parse-text-file in-file-name))
-;; (images->html (decklist->images-urls (decklist-parser/parse-text-file in-file-name)) out-file-name)
-
-;; (generate in-file-name out-file-name)

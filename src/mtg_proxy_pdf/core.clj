@@ -15,25 +15,26 @@
   (let [{:keys [name]} card-record]
     (format image-source-url (codec/url-encode name))))
 
-(defn image-url [card-name query-url]
+(defn cache-uri
+  [uri]
+  (let [out-file-name (.getName (io/file uri))]
+    (with-open [in (io/input-stream uri)
+                out (io/output-stream out-file-name)]
+      (io/copy in out))
+    (io/file out-file-name)))
+
+(defn image-url [query-url]
   (-> query-url
-      (java.net.URL.)
+      (cache-uri)
       (enlive/html-resource)
-      (enlive/select [[:img (enlive/attr= :alt card-name)]])
+      (enlive/select [[:img (enlive/attr-contains :src "scans")]])
       (first)
       (:attrs)
       (:src)))
 
-(defn fetch-image
-  [image-uri]
-  (with-open [in (io/input-stream image-uri)
-              out (io/output-stream (.getName (io/file image-uri)))]
-    (io/copy in out)))
-
 (defn decklist->images-urls [decklist]
-  (let [names (map :name decklist)
-        urls (map build-query-url decklist)]
-    (map image-url names urls)))
+  (let [urls (map build-query-url decklist)]
+    (map image-url urls)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; BEWARE: SIDE-EFFECTS LIVE BELOW!!!
