@@ -19,7 +19,7 @@
   (-> query-url
       (java.net.URL.)
       (enlive/html-resource)
-      (enlive/select [[:img (enlive/attr= :alt card-name)]])
+      (enlive/select [[:img (enlive/attr-contains :src "scans")]])
       (first)
       (:attrs)
       (:src)))
