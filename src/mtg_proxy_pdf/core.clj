@@ -28,7 +28,8 @@
   [image-uri]
   (with-open [in (io/input-stream image-uri)
               out (io/output-stream (.getName (io/file image-uri)))]
-    (io/copy in out)))
+    (io/copy in out))
+  (io/file (.getName (io/file image-uri))))
 
 (defn decklist->images-urls [decklist]
   (let [names (map :name decklist)

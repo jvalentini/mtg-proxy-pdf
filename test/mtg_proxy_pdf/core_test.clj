@@ -46,8 +46,9 @@
 
 (deftest image-cache-test
   (testing "it caches a retrieved image on disk"
-    (fetch-image "http://magiccards.info/scans/en/ud/1.jpg")
-    (is (.exists (io/as-file "1.jpg")))))
+    (let [expected-file (io/as-file "1.jpg")]
+      (is (.exists expected-file))
+      (is (= expected-file (fetch-image "http://magiccards.info/scans/en/ud/1.jpg"))))))
 
 (deftest decklist->images-urls-test
   (testing "it converts a decklist to a list of image urls"
