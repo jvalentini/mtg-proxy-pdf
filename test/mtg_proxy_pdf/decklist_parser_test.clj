@@ -4,11 +4,8 @@
             [clojure.java.io :as io]))
 
 (def test-decklist-string "Academy Rector\nBirthing Pod\n2 Kitchen Finks")
-
 (def test-comma-separated-decklist-string "Academy Rector,Birthing Pod,2x Kitchen Finks")
-
 (def test-dash-separated-decklist-string "Academy Rector---Birthing Pod---2   Kitchen Finks")
-
 (def test-decklist [{ :name "Academy Rector", :quantity 1 }
                     { :name "Birthing Pod",   :quantity 1 }
                     { :name "Kitchen Finks",  :quantity 2 }])
