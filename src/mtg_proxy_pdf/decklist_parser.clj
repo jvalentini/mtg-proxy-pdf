@@ -3,7 +3,9 @@
 
 (defn parse-quantity
   [quantity]
-  (Integer. (or quantity 1)))
+  (if (clojure.string/blank? quantity)
+    1
+    (Integer. (or quantity 1))))
 
 (defn parse-card-name
   [card-name]
@@ -11,7 +13,7 @@
 
 (defn parse-record
   [record]
-  (let [[_ quantity card-name] (re-find #"(^\d)?\s*[x|\*]?\s*[\'|\"]?(.*)[\'|\"]?" record)]
+  (let [[_ quantity card-name] (re-find #"^(\d*)?\s*[x|\*]?\s*[\'|\"]?(.*)[\'|\"]?" record)]
     [(parse-quantity quantity) (parse-card-name card-name)]))
 
 (defn parse-card-name-quantity
