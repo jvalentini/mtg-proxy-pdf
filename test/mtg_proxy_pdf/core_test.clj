@@ -38,11 +38,11 @@
 
 (deftest image-url-test
   (testing "it returns the url to the card image"
-    (is (= test-image-url (image-url test-card-name test-query-url)))))
+    (is (= test-image-url (image-url test-query-url)))))
 
 (deftest image-urls-test
   (testing "it returns the urls of multiple cards"
-    (is (= test-images (map image-url test-card-names test-query-urls)))))
+    (is (= test-images (map image-url test-query-urls)))))
 
 (deftest cache-uri-test
   (testing "it caches a retrieved uri onto disk"

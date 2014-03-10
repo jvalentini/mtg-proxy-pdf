@@ -15,7 +15,7 @@
   (let [{:keys [name]} card-record]
     (format image-source-url (codec/url-encode name))))
 
-(defn image-url [card-name query-url]
+(defn image-url [query-url]
   (-> query-url
       (java.net.URL.)
       (enlive/html-resource)
@@ -33,9 +33,8 @@
     (io/file out-file-name)))
 
 (defn decklist->images-urls [decklist]
-  (let [names (map :name decklist)
-        urls (map build-query-url decklist)]
-    (map image-url names urls)))
+  (let [urls (map build-query-url decklist)]
+    (map image-url urls)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; BEWARE: SIDE-EFFECTS LIVE BELOW!!!
