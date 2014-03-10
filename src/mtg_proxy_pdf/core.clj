@@ -25,7 +25,7 @@
 
 (defn image-url [query-url]
   (-> query-url
-      (java.net.URL.)
+      (cache-uri)
       (enlive/html-resource)
       (enlive/select [[:img (enlive/attr-contains :src "scans")]])
       (first)
