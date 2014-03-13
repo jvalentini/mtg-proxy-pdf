@@ -10,3 +10,4 @@ pom.xml.asc
 test.html
 test.pdf
 image_sources.json
+/test.*
