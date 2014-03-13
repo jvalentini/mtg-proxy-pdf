@@ -18,9 +18,13 @@
 
 (def test-card-record { :name test-card-name, :quantity 1 })
 (def test-decklist [test-card-record
-                    { :name "Birthing Pod",   :quantity 1 }
-                    { :name "Kitchen Finks",  :quantity 1 }])
-(def test-image-url-list `(~test-image-url "http://magiccards.info/scans/en/nph/104.jpg" "http://magiccards.info/scans/en/mma/190.jpg"))
+                    { :name "Birthing Pod",         :quantity 1 }
+                    { :name "Kitchen Finks",        :quantity 2 }
+                    { :name "Fall of the Hammer",   :quantity 3 }
+                    { :name "Lich's Mirror",        :quantity 2 }
+                    { :name "Mana Flair",           :quantity 12 }])
+
+(def test-image-url-list `(~test-image-url "http://magiccards.info/scans/en/nph/104.jpg" "http://magiccards.info/scans/en/mma/190.jpg" "http://magiccards.info/scans/en/bng/93.jpg" "http://magiccards.info/scans/en/ala/210.jpg" "http://magiccards.info/scans/en/uh/81.jpg"))
 (def test-decklist-images (decklist->images-urls test-decklist))
 
 (def test-query-urls '("http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname" "http://magiccards.info/query?q=Angelic%20Renewal&v=card&s=cname" "http://magiccards.info/query?q=Archangel%20Of%20Thune&v=card&s=cname" "http://magiccards.info/query?q=Ashen%20Rider&v=card&s=cname" "http://magiccards.info/query?q=Avacyn%27s%20Pilgrim&v=card&s=cname" "http://magiccards.info/query?q=Barren%20Moor&v=card&s=cname" "http://magiccards.info/query?q=Bayou&v=card&s=cname" "http://magiccards.info/query?q=Birds%20Of%20Paradise&v=card&s=cname" "http://magiccards.info/query?q=Birthing%20Pod&v=card&s=cname"))
