@@ -5,7 +5,9 @@
             [clj-pdf.core :as pdf]
             [hiccup.core :as hiccup]
             [hiccup.element :as element]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clojure.string :as str]
+            [clojure.data.json :as json]))
 
 ;; URL where we can find the card images.
 ;; Expects a format specifier.
@@ -23,18 +25,44 @@
       (io/copy in out))
     (io/file out-file-name)))
 
-(defn image-url [query-url]
-  (-> query-url
-      (cache-uri)
+(def image-cache "image_sources.json")
+
+(defn read-cache [file-name]
+  (json/read-str (slurp file-name) :eof-error? false))
+
+(defn cached-image-src [card-record]
+  (when (.exists (io/as-file image-cache))
+    (read-cache image-cache)))
+
+(defn fetch-image-src [card-record]
+  (-> card-record
+      (build-query-url)
+      (java.net.URL.)
       (enlive/html-resource)
       (enlive/select [[:img (enlive/attr-contains :src "scans")]])
       (first)
       (:attrs)
       (:src)))
 
+(defn get-cache [card-record]
+  (let [key (str/lower-case (:name card-record))]
+    (if (.exists (io/as-file image-cache))
+      (get (read-cache image-cache) key)
+      (spit image-cache ""))))
+
+(defn write-cache-to-disk [key value]
+  (let [cached-image-sources (merge (read-cache image-cache) {key value})]
+    (spit image-cache (json/write-str cached-image-sources))))
+
+(defn cached-image-src [card-record]
+  (let [key (str/lower-case (:name card-record))
+        image-src (or (get-cache card-record)
+                      (fetch-image-src card-record))]
+    (write-cache-to-disk key image-src)
+    image-src))
+
 (defn decklist->images-urls [decklist]
-  (let [urls (map build-query-url decklist)]
-    (map image-url urls)))
+  (map cached-image-src decklist))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; BEWARE: SIDE-EFFECTS LIVE BELOW!!!

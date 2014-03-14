@@ -7,4 +7,5 @@
                  [enlive "1.1.5"]
                  [clj-pdf "1.11.15"]
                  [ring/ring-codec "1.0.0"]
-                 [hiccup "1.0.5"]])
+                 [hiccup "1.0.5"]
+                 [org.clojure/data.json "0.2.4"]])
