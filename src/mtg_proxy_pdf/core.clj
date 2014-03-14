@@ -13,6 +13,9 @@
 ;; Expects a format specifier.
 (def image-source-url "http://magiccards.info/query?q=%s&v=card&s=cname")
 
+;; Location of the image src cache for a card.
+(def image-cache "image_sources.json")
+
 (defn build-query-url [card-record]
   (let [{:keys [name]} card-record]
     (format image-source-url (codec/url-encode name))))
@@ -25,14 +28,8 @@
       (io/copy in out))
     (io/file out-file-name)))
 
-(def image-cache "image_sources.json")
-
 (defn read-cache [file-name]
   (json/read-str (slurp file-name) :eof-error? false))
-
-(defn cached-image-src [card-record]
-  (when (.exists (io/as-file image-cache))
-    (read-cache image-cache)))
 
 (defn fetch-image-src [card-record]
   (-> card-record
@@ -50,7 +47,7 @@
       (get (read-cache image-cache) key)
       (spit image-cache ""))))
 
-(defn write-cache-to-disk [key value]
+(defn write-to-cache [key value]
   (let [cached-image-sources (merge (read-cache image-cache) {key value})]
     (spit image-cache (json/write-str cached-image-sources))))
 
@@ -58,7 +55,7 @@
   (let [key (str/lower-case (:name card-record))
         image-src (or (get-cache card-record)
                       (fetch-image-src card-record))]
-    (write-cache-to-disk key image-src)
+    (write-to-cache key image-src)
     image-src))
 
 (defn decklist->images-urls [decklist]
