@@ -29,6 +29,10 @@
   (testing "it parses a card name with an optional 'x'"
     (is (= {:quantity 4 :name "Academy Rector"} (parse-card-name-quantity "4x Academy Rector")))))
 
+(deftest parse-card-name-quantity-with-star-test
+  (testing "it parses a card name with an optional '*'"
+    (is (= {:quantity 4 :name "Academy Rector"} (parse-card-name-quantity "4* Academy Rector")))))
+
 (deftest parse-card-name-capitalizes-name-test
   (testing "it parses a card name and capitalizes each word"
     (is (= {:quantity 1 :name "Academy Rector"} (parse-card-name-quantity "1 academy rector")))))
