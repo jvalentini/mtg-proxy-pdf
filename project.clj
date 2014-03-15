@@ -9,4 +9,5 @@
                  [ring/ring-codec "1.0.0"]
                  [hiccup "1.0.5"]
                  [org.clojure/data.json "0.2.4"]]
-  :dev-dependencies [[org.clojure/tools.trace "0.7.6"]])
+
+  :profiles { :dev {:dependencies [[org.clojure/tools.trace "0.7.6"]]}})
