@@ -7,7 +7,8 @@
             [hiccup.element :as element]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json])
+  (:use [clojure.tools.trace]))
 
 ;; URL where we can find the card images.
 ;; Expects a format specifier.
@@ -70,7 +71,7 @@
   (element/image { :width 222 :height 315} image))
 
 (defn images->html [images file-name]
-  (spit (apply str file-name ".html") (hiccup/html (map image-element images))))
+  (spit file-name (hiccup/html (map image-element images))))
 
 (defn images->pdf [images file-name]
   (pdf/pdf
@@ -79,7 +80,7 @@
                               :yscale 0.5
                               :align  :center}
                       image]) images)]
-   (apply str file-name ".pdf")))
+   file-name))
 
 (defn generate
   [in-file-name out-file-name]
