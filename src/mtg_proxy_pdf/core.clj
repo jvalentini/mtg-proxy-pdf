@@ -11,13 +11,6 @@
   (:use [clojure.tools.cli :only (cli)])
   (:gen-class :main true))
 
-(defn -main
-  "The application's main function"
-  [& args]
-  (if args
-    (println (str "You passed in this value: " args))
-    (println "Usage: java -jar mtg-proxy-pdf.jar")))
-
 ;; URL where we can find the card images.
 ;; Expects a format specifier.
 (def image-source-url "http://magiccards.info/query?q=%s&v=card&s=cname")
@@ -93,3 +86,25 @@
 (defn generate
   [in-file-name out-file-name]
   (images->html (decklist->images-urls (decklist-parser/parse-text-file in-file-name)) out-file-name))
+
+(defn -main
+  "Given a list of magic cards, create a file (html or pdf) of the card images."
+  [& args]
+  (let [[opts args banner]
+        (cli args
+             ["-d" "--decklist" "Decklist to import cards from"]
+             ["-o" "--output" "Output file"]
+             ["-t" "--type" "Output type: [pdf|html]"]
+             )]
+    (if
+      (and
+        (:decklist opts)
+        (:output opts)
+        (:type opts))
+      (do
+        (if (= (:type opts) "pdf")
+          (images->pdf (decklist->images-urls (decklist-parser/parse-text-file (:decklist opts)))
+                       (:output opts))
+          (images->html (decklist->images-urls (decklist-parser/parse-text-file (:decklist opts)))
+                        (:output opts))))
+      (println banner))))
