@@ -8,6 +8,8 @@
                  [clj-pdf "1.11.15"]
                  [ring/ring-codec "1.0.0"]
                  [hiccup "1.0.5"]
-                 [org.clojure/data.json "0.2.4"]]
+                 [org.clojure/data.json "0.2.4"]
+                 [org.clojure/tools.cli "0.3.1"]]
 
-  :profiles { :dev {:dependencies [[org.clojure/tools.trace "0.7.6"]]}})
+  :profiles { :dev {:dependencies [[org.clojure/tools.trace "0.7.6"]]}}
+  :main mtg-proxy-pdf.core)

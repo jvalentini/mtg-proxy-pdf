@@ -2,8 +2,7 @@
   (:require [clojure.test :refer :all]
             [mtg-proxy-pdf.core :refer :all]
             [mtg-proxy-pdf.decklist-parser :as decklist-parser]
-            [clojure.java.io :as io])
-  (:use [clojure.tools.trace]))
+            [clojure.java.io :as io]))
 
 (def test-card-name "Academy Rector")
 (def test-query-url "http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname")

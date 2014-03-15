@@ -8,7 +8,15 @@
             [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.data.json :as json])
-  (:use [clojure.tools.trace]))
+  (:use [clojure.tools.cli :only (cli)])
+  (:gen-class :main true))
+
+(defn -main
+  "The application's main function"
+  [& args]
+  (if args
+    (println (str "You passed in this value: " args))
+    (println "Usage: java -jar mtg-proxy-pdf.jar")))
 
 ;; URL where we can find the card images.
 ;; Expects a format specifier.
