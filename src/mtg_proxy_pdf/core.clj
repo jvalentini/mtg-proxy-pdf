@@ -7,7 +7,9 @@
             [hiccup.element :as element]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json])
+  (:use [clojure.tools.cli :only (cli)])
+  (:gen-class :main true))
 
 ;; URL where we can find the card images.
 ;; Expects a format specifier.
@@ -70,7 +72,7 @@
   (element/image { :width 222 :height 315} image))
 
 (defn images->html [images file-name]
-  (spit (apply str file-name ".html") (hiccup/html (map image-element images))))
+  (spit file-name (hiccup/html (map image-element images))))
 
 (defn images->pdf [images file-name]
   (pdf/pdf
@@ -79,8 +81,30 @@
                               :yscale 0.5
                               :align  :center}
                       image]) images)]
-   (apply str file-name ".pdf")))
+   file-name))
 
 (defn generate
   [in-file-name out-file-name]
   (images->html (decklist->images-urls (decklist-parser/parse-text-file in-file-name)) out-file-name))
+
+(defn -main
+  "Given a list of magic cards, create a file (html or pdf) of the card images."
+  [& args]
+  (let [[opts args banner]
+        (cli args
+             ["-d" "--decklist" "Decklist to import cards from"]
+             ["-o" "--output" "Output file"]
+             ["-t" "--type" "Output type: [pdf|html]"]
+             )]
+    (if
+      (and
+        (:decklist opts)
+        (:output opts)
+        (:type opts))
+      (do
+        (if (= (:type opts) "pdf")
+          (images->pdf (decklist->images-urls (decklist-parser/parse-text-file (:decklist opts)))
+                       (:output opts))
+          (images->html (decklist->images-urls (decklist-parser/parse-text-file (:decklist opts)))
+                        (:output opts))))
+      (println banner))))
