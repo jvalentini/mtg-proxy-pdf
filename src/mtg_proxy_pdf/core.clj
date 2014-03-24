@@ -57,7 +57,7 @@
   (let [key (str/lower-case (:name card-record))
         image-src (or (get-cache card-record)
                       (fetch-image-src card-record))]
-    (write-to-cache key image-src)
+    (future (write-to-cache key image-src))
     image-src))
 
 (defn decklist->images-urls [decklist]
