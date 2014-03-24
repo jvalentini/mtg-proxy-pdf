@@ -3,6 +3,8 @@ MTG Proxy Generator
 
 Given a list of magic cards, create a file (html or pdf) of the card images.
 
+[![Build Status](https://travis-ci.org/jvalentini/mtg-proxy-pdf.svg?branch=master)](https://travis-ci.org/jvalentini/mtg-proxy-pdf)
+
 TODO:
 - Allow user to determine output format (pdf or html)
 - Cache retrieved images.
