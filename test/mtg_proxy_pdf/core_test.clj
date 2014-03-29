@@ -22,10 +22,21 @@
                     { :name "Birthing Pod",        :quantity 1 }
                     { :name "Kitchen Finks",       :quantity 2 }
                     { :name "Fall of the Hammer",  :quantity 3 }
-                    { :name "Lich's Mirror",       :quantity 2 }
-                    { :name "Mana Flair",          :quantity 12 }])
+                    { :name "Lich's Mirror",       :quantity 1 }
+                    { :name "Mana Flair",          :quantity 4 }])
 
-(def test-image-src-list `(~test-image-src "http://magiccards.info/scans/en/nph/104.jpg" "http://magiccards.info/scans/en/mma/190.jpg" "http://magiccards.info/scans/en/bng/93.jpg" "http://magiccards.info/scans/en/ala/210.jpg" "http://magiccards.info/scans/en/uh/81.jpg"))
+(def test-image-src-list `(~test-image-src
+                           "http://magiccards.info/scans/en/nph/104.jpg"
+                           "http://magiccards.info/scans/en/mma/190.jpg"
+                           "http://magiccards.info/scans/en/mma/190.jpg"
+                           "http://magiccards.info/scans/en/bng/93.jpg"
+                           "http://magiccards.info/scans/en/bng/93.jpg"
+                           "http://magiccards.info/scans/en/bng/93.jpg"
+                           "http://magiccards.info/scans/en/ala/210.jpg"
+                           "http://magiccards.info/scans/en/uh/81.jpg"
+                           "http://magiccards.info/scans/en/uh/81.jpg"
+                           "http://magiccards.info/scans/en/uh/81.jpg"
+                           "http://magiccards.info/scans/en/uh/81.jpg"))
 
 (def test-decklist-images (decklist->images-urls test-decklist))
 
@@ -80,9 +91,14 @@
     (is (= test-image-src-list
            test-decklist-images))))
 
+(deftest repeat-card-per-quantity-test
+  (testing "it returns a card image src once for each quantity"
+    (is (= '("http://magiccards.info/scans/en/mma/190.jpg" "http://magiccards.info/scans/en/mma/190.jpg")
+           (cached-image-src { :name "Kitchen Finks", :quantity 2 })))))
+
 (deftest cached-image-src-test
   (testing "it caches list of image sources"
-    (is (= test-image-src
+    (is (= (list test-image-src)
            (cached-image-src test-card-record)))))
 
 (deftest read-cache-test

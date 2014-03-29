@@ -58,10 +58,10 @@
         image-src (or (get-cache card-record)
                       (fetch-image-src card-record))]
     (future (write-to-cache key image-src))
-    image-src))
+    (repeat (:quantity card-record) image-src)))
 
 (defn decklist->images-urls [decklist]
-  (map cached-image-src decklist))
+  (flatten (map cached-image-src decklist)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; BEWARE: SIDE-EFFECTS LIVE BELOW!!!
