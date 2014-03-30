@@ -1,5 +1,6 @@
 (ns mtg-proxy-pdf.core
   (:require [mtg-proxy-pdf.decklist-parser :as decklist-parser]
+            [mtg-proxy-pdf.decklist-parser :refer [get-card-id]]
             [net.cgrand.enlive-html :as enlive]
             [ring.util.codec :as codec]
             [clj-pdf.core :as pdf]
@@ -60,8 +61,21 @@
     (future (write-to-cache key image-src))
     (repeat (:quantity card-record) image-src)))
 
+(defn quantities-by-card [card-quantity-list card-record]
+  (if (contains? card-quantity-list (:id card-record))
+    (update-in card-quantity-list [(:id card-record) :quantity] (fnil + 0) (:quantity card-record))
+    (assoc card-quantity-list (:id card-record) card-record)))
+
+(defn reduce-decklist [decklist]
+  (reduce quantities-by-card {} decklist))
+
 (defn decklist->images-urls [decklist]
-  (flatten (map cached-image-src decklist)))
+  (->> decklist
+       (reduce-decklist)
+       (sort)
+       (map second)
+       (map cached-image-src)
+       (flatten)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; BEWARE: SIDE-EFFECTS LIVE BELOW!!!

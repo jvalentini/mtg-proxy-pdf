@@ -2,6 +2,7 @@
   (:require [clojure.test :refer :all]
             [mtg-proxy-pdf.core :refer :all]
             [mtg-proxy-pdf.decklist-parser :as decklist-parser]
+            [mtg-proxy-pdf.decklist-parser :refer [get-card-id card-record]]
             [clojure.java.io :as io])
   (:use midje.sweet))
 
@@ -17,21 +18,21 @@
 ;; (def test-query-url "http://magiccards.info/query?q=Avacyn%27s%20Pilgrim&v=card&s=cname")
 ;; (def test-image-src "http://magiccards.info/scans/en/isd/170.jpg")
 
-(def test-card-record { :name test-card-name, :quantity 1 })
-(def test-decklist [test-card-record
-                    { :name "Birthing Pod",        :quantity 1 }
-                    { :name "Kitchen Finks",       :quantity 2 }
-                    { :name "Fall of the Hammer",  :quantity 3 }
-                    { :name "Lich's Mirror",       :quantity 1 }
-                    { :name "Mana Flair",          :quantity 4 }])
+(def test-card-record (card-record test-card-name 1))
+(def test-decklist (list test-card-record
+                         (card-record "Birthing Pod" 1)
+                         (card-record "Fall Of The Hammer" 3)
+                         (card-record "Kitchen Finks" 2)
+                         (card-record "Lich's Mirror" 1)
+                         (card-record "Mana Flair" 4)))
 
 (def test-image-src-list `(~test-image-src
                            "http://magiccards.info/scans/en/nph/104.jpg"
+                           "http://magiccards.info/scans/en/bng/93.jpg"
+                           "http://magiccards.info/scans/en/bng/93.jpg"
+                           "http://magiccards.info/scans/en/bng/93.jpg"
                            "http://magiccards.info/scans/en/mma/190.jpg"
                            "http://magiccards.info/scans/en/mma/190.jpg"
-                           "http://magiccards.info/scans/en/bng/93.jpg"
-                           "http://magiccards.info/scans/en/bng/93.jpg"
-                           "http://magiccards.info/scans/en/bng/93.jpg"
                            "http://magiccards.info/scans/en/ala/210.jpg"
                            "http://magiccards.info/scans/en/uh/81.jpg"
                            "http://magiccards.info/scans/en/uh/81.jpg"
@@ -40,15 +41,15 @@
 
 (def test-decklist-images (decklist->images-urls test-decklist))
 
-(def test-large-decklist [{ :name "Academy Rector",      :quantity 1 }
-                          { :name "Angelic Renewal",     :quantity 1 }
-                          { :name "Archangel Of Thune",  :quantity 1 }
-                          { :name "Ashen Rider",         :quantity 1 }
-                          { :name "Avacyn's Pilgrim",    :quantity 1 }
-                          { :name "Barren Moor",         :quantity 1 }
-                          { :name "Bayou",               :quantity 1 }
-                          { :name "Birds of Paradise",   :quantity 1 }
-                          { :name "Birthing Pod",        :quantity 1 }])
+(def test-large-decklist (list (card-record "Academy Rector" 1)
+                               (card-record "Angelic Renewal" 1)
+                               (card-record "Archangel Of Thune" 1)
+                               (card-record "Ashen Rider" 1)
+                               (card-record "Avacyn's Pilgrim" 1)
+                               (card-record "Barren Moor" 1)
+                               (card-record "Bayou" 1)
+                               (card-record "Birds of Paradise" 1)
+                               (card-record "Birthing Pod" 1 )))
 
 (def test-query-urls '("http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname" "http://magiccards.info/query?q=Angelic%20Renewal&v=card&s=cname" "http://magiccards.info/query?q=Archangel%20Of%20Thune&v=card&s=cname" "http://magiccards.info/query?q=Ashen%20Rider&v=card&s=cname" "http://magiccards.info/query?q=Avacyn%27s%20Pilgrim&v=card&s=cname" "http://magiccards.info/query?q=Barren%20Moor&v=card&s=cname" "http://magiccards.info/query?q=Bayou&v=card&s=cname" "http://magiccards.info/query?q=Birds%20Of%20Paradise&v=card&s=cname" "http://magiccards.info/query?q=Birthing%20Pod&v=card&s=cname"))
 (def test-card-names '("Academy Rector" "Angelic Renewal" "Archangel Of Thune" "Ashen Rider" "Avacyn's Pilgrim" "Barren Moor" "Bayou" "Birds Of Paradise" "Birthing Pod"))
@@ -95,6 +96,14 @@
   (testing "it returns a card image src once for each quantity"
     (is (= '("http://magiccards.info/scans/en/mma/190.jpg" "http://magiccards.info/scans/en/mma/190.jpg")
            (cached-image-src { :name "Kitchen Finks", :quantity 2 })))))
+
+(deftest minimal-decklist-test
+  (testing "it creates a minimal decklist. if duplicate card names are seen, it combines them."
+    (is (= {(get-card-id "Kitchen Finks") (card-record "Kitchen Finks" 3)
+            (get-card-id "Birthing Pod") (card-record "Birthing Pod" 2)}
+           (reduce-decklist [(card-record "Kitchen Finks" 2)
+                             (card-record "Birthing Pod" 2)
+                             (card-record "Kitchen Finks" 1)])))))
 
 (deftest cached-image-src-test
   (testing "it caches list of image sources"
