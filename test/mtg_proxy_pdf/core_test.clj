@@ -20,11 +20,11 @@
 
 (def test-card-record (card-record test-card-name 1))
 (def test-decklist (list test-card-record
-                         (card-record "Birthing Pod" 1)
-                         (card-record "Fall Of The Hammer" 3)
-                         (card-record "Kitchen Finks" 2)
-                         (card-record "Lich's Mirror" 1)
-                         (card-record "Mana Flair" 4)))
+                         (card-record "Birthing Pod"        1 )
+                         (card-record "Fall Of The Hammer"  3 )
+                         (card-record "Kitchen Finks"       2 )
+                         (card-record "Lich's Mirror"       1 )
+                         (card-record "Mana Flair"          4 )))
 
 (def test-image-src-list `(~test-image-src
                            "http://magiccards.info/scans/en/nph/104.jpg"
@@ -66,20 +66,16 @@
 (def test-out-file-name-html (apply str test-out-file-name ".html"))
 (def test-out-file-html (io/as-file test-out-file-name-html))
 
-(deftest build-query-url-test
-  (testing "it builds a url to magiccards.info"
-    (is (= test-query-url
-           (build-query-url test-card-record)))))
-
-(deftest image-src-test
-  (testing "it returns the url to the card image"
-    (is (= test-image-src
-           (fetch-image-src test-card-record)))))
-
-(deftest image-srcs-test
-  (testing "it returns the urls of multiple cards"
-    (is (= test-images
-           (map fetch-image-src test-large-decklist)))))
+(facts "about url building"
+  (fact "build-query-url builds a valid url to magiccards.info"
+    (build-query-url test-card-record)
+    => test-query-url)
+  (fact "fetch-image-src returns the url to the card image"
+    (fetch-image-src test-card-record)
+    => test-image-src)
+  (fact "should return the urls of multiple cards"
+    (map fetch-image-src test-large-decklist)
+    => test-images))
 
 ;; (deftest cache-uri-test
 ;;   (testing "it caches a retrieved uri onto disk"
@@ -87,58 +83,52 @@
 ;;       (is (.exists expected-file))
 ;;       (is (= expected-file (cache-uri "http://magiccards.info/scans/en/ud/1.jpg"))))))
 
+(facts "about desklists"
+  ;; (fact "converts a decklist to a list of image urls"
+  ;;   (test-decklist-images)
+  ;;   => test-image-src-list)
+  (fact "returns a card image src once for each quantity"
+    (cached-image-src { :name "Kitchen Finks", :quantity 2})
+    => '("http://magiccards.info/scans/en/mma/190.jpg" "http://magiccards.info/scans/en/mma/190.jpg"))
+  (fact "creates a minimal decklist combines any cards in the list more than once"
+    (reduce-decklist [(card-record "Kitchen Finks"  2 )
+                      (card-record "Birthing Pod"   2 )
+                      (card-record "Kitchen Finks"  1 )])
+    =>  {(get-card-id "Kitchen Finks") (card-record "Kitchen Finks"  3 )
+         (get-card-id "Birthing Pod")  (card-record "Birthing Pod"   2 )}))
+
+
+(facts "about caching"
+  (fact "it caches list of image sources"
+    (cached-image-src test-card-record)
+    => (list test-image-src))
+  (fact "it can read from the cache"
+    (get-cache test-card-record)
+    => test-image-src))
+
+(facts "about image and document generation"
+  (fact "it converts a decklist to a list of image urls from a parsed file"
+    (decklist->images-urls (decklist-parser/parse-text-file test-in-file-name))
+    => test-image-src-list)
+  (fact "it writes the card images to html"
+    (io/delete-file test-out-file-name-html true) ;; true to ignore error if file doesn't exist
+    (images->html test-decklist-images test-out-file-name-html)
+    (.exists test-out-file-html)
+    => truthy)
+  (fact "it writes the card images to a pdf"
+    (io/delete-file test-out-file-name-pdf true)
+    (images->pdf test-decklist-images test-out-file-name-pdf)
+    (.exists test-out-file-pdf)
+    => truthy)
+  (fact "takes a decklist file and creates an html page with the images"
+    (.exists test-in-file) => truthy
+    (io/delete-file test-out-file-name true)
+    (generate test-in-file-name test-out-file-name)
+    (.exists test-out-file) => truthy))
+
+;; Couldn't get this test working right off the bat will take a look in the morning
+;; In the mean time this test will still work even though it isn't in midje format
 (deftest decklist->images-urls-test
   (testing "it converts a decklist to a list of image urls"
     (is (= test-image-src-list
            test-decklist-images))))
-
-(deftest repeat-card-per-quantity-test
-  (testing "it returns a card image src once for each quantity"
-    (is (= '("http://magiccards.info/scans/en/mma/190.jpg" "http://magiccards.info/scans/en/mma/190.jpg")
-           (cached-image-src { :name "Kitchen Finks", :quantity 2 })))))
-
-(deftest minimal-decklist-test
-  (testing "it creates a minimal decklist. if duplicate card names are seen, it combines them."
-    (is (= {(get-card-id "Kitchen Finks") (card-record "Kitchen Finks" 3)
-            (get-card-id "Birthing Pod") (card-record "Birthing Pod" 2)}
-           (reduce-decklist [(card-record "Kitchen Finks" 2)
-                             (card-record "Birthing Pod" 2)
-                             (card-record "Kitchen Finks" 1)])))))
-
-(deftest cached-image-src-test
-  (testing "it caches list of image sources"
-    (is (= (list test-image-src)
-           (cached-image-src test-card-record)))))
-
-(deftest read-cache-test
-  (testing "it reads from cache"
-    (is (= test-image-src
-           (get-cache test-card-record)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; SIDE-EFFECTS TESTS
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(deftest decklist->images-urls-from-parsed-file-test
-  (testing "it converts a decklist to a list of image urls from a parsed file"
-    (is (= test-image-src-list
-           (decklist->images-urls (decklist-parser/parse-text-file test-in-file-name))))))
-
-(deftest images->html-test
-  (testing "it writes the card images to html"
-    (io/delete-file test-out-file-name-html true) ;; true to ignore error if file doesn't exist
-    (images->html test-decklist-images test-out-file-name-html)
-    (is (.exists test-out-file-html))))
-
-(deftest images->pdf-test
-  (testing "it writes the card images to a pdf"
-    (io/delete-file test-out-file-name-pdf true) ;; true to ignore error if file doesn't exist
-    (images->pdf test-decklist-images test-out-file-name-pdf)
-    (is (.exists test-out-file-pdf))))
-
-(deftest generate-test
-  (testing "takes a decklist file and creates an html page with the images"
-    (is (.exists test-in-file)) ;; ensure our input file exists
-    (io/delete-file test-out-file-name true) ;; delete output file if it exists
-    (generate test-in-file-name test-out-file-name)
-    (is (.exists test-out-file))))
