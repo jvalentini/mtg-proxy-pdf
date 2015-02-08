@@ -53,7 +53,15 @@
 
 (def test-query-urls '("http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname" "http://magiccards.info/query?q=Angelic%20Renewal&v=card&s=cname" "http://magiccards.info/query?q=Archangel%20Of%20Thune&v=card&s=cname" "http://magiccards.info/query?q=Ashen%20Rider&v=card&s=cname" "http://magiccards.info/query?q=Avacyn%27s%20Pilgrim&v=card&s=cname" "http://magiccards.info/query?q=Barren%20Moor&v=card&s=cname" "http://magiccards.info/query?q=Bayou&v=card&s=cname" "http://magiccards.info/query?q=Birds%20Of%20Paradise&v=card&s=cname" "http://magiccards.info/query?q=Birthing%20Pod&v=card&s=cname"))
 (def test-card-names '("Academy Rector" "Angelic Renewal" "Archangel Of Thune" "Ashen Rider" "Avacyn's Pilgrim" "Barren Moor" "Bayou" "Birds Of Paradise" "Birthing Pod"))
-(def test-images '("http://magiccards.info/scans/en/ud/1.jpg" "http://magiccards.info/scans/en/wl/120.jpg" "http://magiccards.info/scans/en/m14/5.jpg" "http://magiccards.info/scans/en/ths/187.jpg" "http://magiccards.info/scans/en/isd/170.jpg" "http://magiccards.info/scans/en/c13/277.jpg" "http://magiccards.info/scans/en/rv/283.jpg" "http://magiccards.info/scans/en/m12/165.jpg" "http://magiccards.info/scans/en/nph/104.jpg"))
+(def test-images '("http://magiccards.info/scans/en/ud/1.jpg"
+                   "http://magiccards.info/scans/en/wl/120.jpg"
+                   "http://magiccards.info/scans/en/m14/5.jpg"
+                   "http://magiccards.info/scans/en/ths/187.jpg"
+                   "http://magiccards.info/scans/en/isd/170.jpg"
+                   "http://magiccards.info/scans/en/c14/284.jpg"
+                   "http://magiccards.info/scans/en/vma/293.jpg"
+                   "http://magiccards.info/scans/en/m12/165.jpg"
+                   "http://magiccards.info/scans/en/nph/104.jpg"))
 
 (def test-out-file-name "test/target/test")
 (def test-out-file (io/as-file test-out-file-name))
