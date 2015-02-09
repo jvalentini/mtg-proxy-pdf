@@ -10,7 +10,6 @@
                  [hiccup "1.0.5"]
                  [org.clojure/data.json "0.2.4"]
                  [org.clojure/tools.cli "0.3.1"]]
-
   :profiles { :dev {:dependencies [[org.clojure/tools.trace "0.7.6"]
                                    [midje "1.5.1"]]}}
   :main mtg-proxy-pdf.core
