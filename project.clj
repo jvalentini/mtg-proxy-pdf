@@ -13,4 +13,5 @@
 
   :profiles { :dev {:dependencies [[org.clojure/tools.trace "0.7.6"]
                                    [midje "1.5.1"]]}}
-  :main mtg-proxy-pdf.core)
+  :main mtg-proxy-pdf.core
+  :aot [mtg-proxy-pdf.core])
