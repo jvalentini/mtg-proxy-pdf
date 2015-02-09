@@ -1,5 +1,5 @@
 (ns mtg-proxy-pdf.decklist-parser
-  (:require [clojure.string :refer [split capitalize join]]))
+  (:require [clojure.string :refer [capitalize join split]]))
 
 (defn get-card-id [card-name]
   (keyword card-name))

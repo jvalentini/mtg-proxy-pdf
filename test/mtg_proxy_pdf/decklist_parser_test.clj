@@ -1,7 +1,6 @@
 (ns mtg-proxy-pdf.decklist-parser-test
   (:require [clojure.test :refer :all]
-            [mtg-proxy-pdf.decklist-parser :refer :all]
-            [clojure.java.io :as io]))
+            [mtg-proxy-pdf.decklist-parser :refer :all]))
 
 (def test-decklist-string "Academy Rector\nBirthing Pod\n3* Fall of the Hammer\n2 Kitchen Finks\n1 Lich's Mirror\n4 Mana Flair")
 (def test-comma-separated-decklist-string "Academy Rector,Birthing Pod,3* Fall of the Hammer,2x Kitchen Finks,1 Lich's Mirror,4 Mana Flair")

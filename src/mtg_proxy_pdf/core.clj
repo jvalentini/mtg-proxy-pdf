@@ -1,15 +1,14 @@
 (ns mtg-proxy-pdf.core
-  (:require [mtg-proxy-pdf.decklist-parser :as decklist-parser]
-            [mtg-proxy-pdf.decklist-parser :refer [get-card-id]]
-            [net.cgrand.enlive-html :as enlive]
-            [ring.util.codec :as codec]
-            [clj-pdf.core :as pdf]
-            [hiccup.core :as hiccup]
-            [hiccup.element :as element]
+  (:require [clj-pdf.core :as pdf]
+            [clojure.data.json :as json]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [clojure.data.json :as json])
-  (:use [clojure.tools.cli :only (cli)])
+            [clojure.tools.cli :refer [cli]]
+            [hiccup.core :as hiccup]
+            [hiccup.element :as element]
+            [mtg-proxy-pdf.decklist-parser :as decklist-parser]
+            [net.cgrand.enlive-html :as enlive]
+            [ring.util.codec :as codec])
   (:gen-class :main true))
 
 ;; URL where we can find the card images.

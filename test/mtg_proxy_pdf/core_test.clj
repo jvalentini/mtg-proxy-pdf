@@ -1,10 +1,9 @@
 (ns mtg-proxy-pdf.core-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.java.io :as io]
+            [clojure.test :refer :all]
             [mtg-proxy-pdf.core :refer :all]
-            [mtg-proxy-pdf.decklist-parser :as decklist-parser]
-            [mtg-proxy-pdf.decklist-parser :refer [get-card-id card-record]]
-            [clojure.java.io :as io])
-  (:use midje.sweet))
+            [mtg-proxy-pdf.decklist-parser :as decklist-parser :refer [card-record
+                                                                       get-card-id]]))
 
 (def test-card-name "Academy Rector")
 (def test-query-url "http://magiccards.info/query?q=Academy%20Rector&v=card&s=cname")
